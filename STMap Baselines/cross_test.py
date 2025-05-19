@@ -23,8 +23,6 @@ from tqdm import tqdm
 import pynvml
 import warnings
 
-# from PCGrad.pcgrad import PCGrad
-
 warnings.simplefilter('ignore')
 
 TARGET_DOMAIN = {'VIPL': ['VIPL'], \
@@ -35,8 +33,7 @@ TARGET_DOMAIN = {'VIPL': ['VIPL'], \
                  'HCW': ['HCW'],
                  'VV100': ['VV100'],
                  'MMPD': ['MMPD'],
-                 'HMPC-Dv1': ['HMPC-Dv1'],
-                 'On_Road_rPPG': ['On-Road-rPPG-Processed-Final']}
+                 'On_Road_rPPG': ['PhysDrive']}
 
 FILEA_NAME = {'VIPL': ['VIPL', 'VIPL', 'STMap_RGB_Align_CSI'], \
               'V4V': ['V4V', 'V4V', 'STMap_RGB'], \
@@ -46,17 +43,16 @@ FILEA_NAME = {'VIPL': ['VIPL', 'VIPL', 'STMap_RGB_Align_CSI'], \
               'HCW': ['HCW', 'HCW', 'STMap_RGB'],
               'VV100': ['VV100', 'VV100', 'STMap_RGB'],
               'MMPD': ['MMPD', 'MMPD', 'STMap_RGB'],
-              'HMPC-Dv1': ['HMPC-Dv1', 'HMPC-Dv1', 'STMap'],
-              'On_Road_rPPG': ['On-Road-rPPG', 'On-Road-rPPG',
+              'PhysDrive': ['PhysDrive', 'PhysDrive',
                                'STMap_RGB']
               }
 
-Condition = ['time']
-# 'car'       (车型),
-# 'gender'    (性别),
-# 'time'      (时段),
-# 'difficulty'(路况),
-# 'speech'    (说话状态)
+# Condition = ['time']
+# 'car'       (car type),
+# 'gender'    (gender),
+# 'time'      (light),
+# 'difficulty'(road type),
+# 'speech'    (motion)
 
 if __name__ == '__main__':
     args = utils.get_args()
@@ -75,9 +71,7 @@ if __name__ == '__main__':
     FILE_Name = FILEA_NAME[args.tgt]
     Target_name = args.tgt
     Target_fileRoot = root_file + FILE_Name[0]
-    Target_fileRoot = Target_fileRoot.replace('STMap/HCW', 'GPT-Chat/ChatGPT')
     Target_saveRoot = root_file + 'STMap_Index/' + FILE_Name[1]
-    Target_saveRoot = Target_saveRoot.replace('STMap/STMap_Index/HCW', 'GPT-Chat/STMap_Index/HCW')
     Target_map = FILE_Name[2] + '.png'
 
     if args.reData == 1:
@@ -88,6 +82,7 @@ if __name__ == '__main__':
 
     group_list = MyDataset.group_samples(Target_saveRoot, ['time'])
     group_list.update(MyDataset.group_samples(Target_saveRoot, ['speech']))
+    group_list.update(MyDataset.group_samples(Target_saveRoot, ['difficulty']))
     group_list['all'] = os.listdir(Target_saveRoot)
 
     # 训练参数
@@ -162,12 +157,9 @@ if __name__ == '__main__':
 
         tgt_loader = DataLoader(Target_db, batch_size=batch_size_num, shuffle=False, num_workers=num_workers)
 
-        my_model = BVPNet.BVPNet()  # Baseline.BaseNet_CNN()  # Model.My_model()#Baseline.BaseNet_CNN()
+        my_model = Baseline.BaseNet_CNN() 
 
         if reTrain == 1:
-            # my_model = torch.load(
-            #     '/home/jywang/project/STMap_Baseline_On_Road_rPPG/pre_encoder/PURE_10000_resnet18_full_supervised',
-            #     map_location=device)
             pre_encoder = '/home/jywang/project/STMap_Baseline_On_Road_rPPG/pre_encoder/MMPD_10000_resnet18_full_supervised_BVPNet'
             my_model = torch.load(
                 pre_encoder,
