@@ -82,44 +82,7 @@ class Data_DG(Dataset):
         return self.num
 
     def getLabel(self, nowPath, Step_Index):
-        # 读取每个数据集的心率值和BVP信号
-        # nowPath=
-        if self.dataName == 'COH':
-            bvp_name = 'Label/BVP.mat'
-            bvp_path = os.path.join(nowPath, bvp_name)
-            bvp = scio.loadmat(bvp_path)['BVP']
-            bvp = np.array(bvp.astype('float32')).reshape(-1)
-            bvp = bvp[Step_Index:Step_Index + self.frames_num]
-            bvp = (bvp - np.min(bvp)) / (np.max(bvp) - np.min(bvp))
-            bvp = bvp.astype('float32')
-            gt = np.array(0.0)
-            gt = gt.astype('float32')
-
-        elif self.dataName == 'VV100':
-            bvp_name = 'Label/BVP_Filt.mat'
-            bvp_path = os.path.join(nowPath, bvp_name)
-            bvp = scio.loadmat(bvp_path)['BVP']
-            bvp = np.array(bvp.astype('float32')).reshape(-1)
-            bvp = bvp[Step_Index:Step_Index + self.frames_num]
-            bvp = (bvp - np.min(bvp)) / (np.max(bvp) - np.min(bvp))
-            bvp = bvp.astype('float32')
-
-            gt_name = 'Label/HR.mat'
-            gt_path = os.path.join(nowPath, gt_name)
-            gt = scio.loadmat(gt_path)['HR']
-            gt = np.array(gt.astype('float32')).reshape(-1)
-            gt = np.nanmean(gt[Step_Index:Step_Index + self.frames_num])
-            gt = gt.astype('float32')
-
-            sp_name = 'Label/SPO2.mat'
-            sp_path = os.path.join(nowPath, sp_name)
-            sp = scio.loadmat(sp_path)['HR']  # wrong label name but correct value
-            sp = np.array(sp.astype('float32')).reshape(-1)
-            sp = np.nanmean(sp[Step_Index:Step_Index + self.frames_num])
-            sp = sp.astype('float32')
-            return gt, bvp, sp
-
-        elif self.dataName == 'On_Road_rPPG':
+        if self.dataName == 'PhysDrive':
             resp_name = 'Label/RESP.mat'
             resp_path = os.path.join(nowPath, resp_name)
             resp = scio.loadmat(resp_path)['RESP']
@@ -132,70 +95,18 @@ class Data_DG(Dataset):
             except:
                 rr= utils.rr_cal(resp, 30)
             rr = rr.astype('float32')
-            #rr = np.nanmean(rr)
 
             bvp_name = 'Label/BVP_Filt.mat'
             bvp_path = os.path.join(nowPath, bvp_name)
             bvp = scio.loadmat(bvp_path)['BVP']
             bvp = np.array(bvp.astype('float32')).reshape(-1)
             bvp = bvp[Step_Index:Step_Index + self.frames_num]
-            # if bvp.shape == (0,):
-            #     print(nowPath,Step_Index)
             bvp = (bvp - np.min(bvp)) / (np.max(bvp) - np.min(bvp))
             bvp = bvp.astype('float32')
 
-            # bvp = np.diff(bvp)
-            # bvp = (bvp - np.min(bvp)) / (np.max(bvp) - np.min(bvp))
-
-            # x = np.arange(len(bvp))  # 创建一个时间步长
-            # coefficients = np.polyfit(x, bvp, 1)  # 拟合一次多项式（线性趋势）
-            # trend = np.polyval(coefficients, x)  # 计算拟合的趋势成分
-            #
-            # # 去除趋势：原始信号减去拟合的趋势成分
-            # bvp = bvp - trend
-            # bvp = (bvp - np.min(bvp)) / (np.max(bvp) - np.min(bvp))
-
-            # if np.isnan(bvp).sum().item() == 0:
-            #
-            #     print("NaN :", bvp_path)
-
-            # gt_name = 'Label/HR.mat'
-            # gt_path = os.path.join(nowPath, gt_name)
-            # gt = scio.loadmat(gt_path)['HR']
-            # gt = np.array(gt.astype('float32')).reshape(-1)
-            # gt = np.nanmean(gt[Step_Index:Step_Index + self.frames_num])
-            # gt = gt.astype('float32').reshape(-1)
-            # print('HR 1', gt)
-            #
-            # gt, _, _ = utils.hr_fft(bvp, fs=30, harmonics_removal=True)
-            # gt = np.array(gt)
-            # gt = gt.astype('float32')
-            # print('HR 2', gt)
             gt = utils.hr_cal(bvp)
             gt = np.array(gt)
             gt = gt.astype('float32')
-
-
-            # ecg_name = 'Label/ECG.mat'
-            # ecg_path = os.path.join(nowPath, ecg_name)
-            # ecg = scio.loadmat(ecg_path)['ECG']
-            # ecg = np.array(ecg.astype('float32')).reshape(-1)
-            # ecg = ecg[Step_Index:Step_Index + self.frames_num]
-            # ecg = (ecg - np.min(ecg)) / (np.max(ecg) - np.min(ecg))
-            # ecg = ecg.astype('float32')
-            # peaks = nk.ecg_findpeaks(ecg, sampling_rate=30, method='rodrigues2021')['ECG_R_Peaks']
-            # peaks -= 1
-            # rr_intervals = np.diff(peaks) / 30 * 1000  # 将间隔转换为毫秒
-            # nn_intervals = rr_intervals
-            # gt = 60000 / np.mean(nn_intervals)
-            # print('HR 4', gt)
-            # #
-            # peaks = nk.ppg_findpeaks(bvp, sampling_rate=30, method='elgendi')['PPG_Peaks']
-            # peaks -= 1
-            # rr_intervals = np.diff(peaks) / 30 * 1000  # 将间隔转换为毫秒
-            # nn_intervals = rr_intervals
-            # gt = 60000 / np.mean(nn_intervals)
-            # print('HR 5', gt)
 
             sp_name = 'Label/SPO2.mat'
             sp_path = os.path.join(nowPath, sp_name)
@@ -205,125 +116,6 @@ class Data_DG(Dataset):
             sp = sp.astype('float32')
 
             return gt, bvp, sp, rr, resp
-
-        elif self.dataName == 'HMPC-Dv1':
-            bvp_name = 'Label/bvp.mat'
-            bvp_path = os.path.join(nowPath, bvp_name)
-            bvp = scio.loadmat(bvp_path)['Filtered_BVP']
-            bvp = np.array(bvp.astype('float32')).reshape(-1)
-            bvp = bvp[Step_Index:Step_Index + self.frames_num]
-            bvp = (bvp - np.min(bvp)) / (np.max(bvp) - np.min(bvp))
-            bvp = bvp.astype('float32')
-
-            gt_name = 'Label/HR.mat'
-            gt_path = os.path.join(nowPath, gt_name)
-            gt = scio.loadmat(gt_path)['Filtered_HR']
-            gt = np.array(gt.astype('float32')).reshape(-1)
-            gt = np.nanmean(gt[Step_Index:Step_Index + self.frames_num])
-            gt = gt.astype('float32')
-
-            sp_name = 'Label/SpO2.mat'
-            sp_path = os.path.join(nowPath, sp_name)
-            sp = scio.loadmat(sp_path)['Filtered_SpO2']
-            sp = np.array(sp.astype('float32')).reshape(-1)
-            sp = np.nanmean(sp[Step_Index:Step_Index + self.frames_num])
-            sp = sp.astype('float32')
-            return gt, bvp, sp
-
-        elif self.dataName == 'BUAA':
-            bvp_name = 'Label/BVP.mat'
-            bvp_path = os.path.join(nowPath, bvp_name)
-            bvp = scio.loadmat(bvp_path)['BVP']
-            bvp = np.array(bvp.astype('float32')).reshape(-1)
-            bvp = bvp[Step_Index:Step_Index + self.frames_num]
-            bvp = (bvp - np.min(bvp)) / (np.max(bvp) - np.min(bvp))
-            bvp = bvp.astype('float32')
-
-            gt_name = 'Label/HR_256.mat'
-            gt_path = os.path.join(nowPath, gt_name)
-            gt = scio.loadmat(gt_path)['HR']
-            gt = np.array(gt.astype('float32')).reshape(-1)
-            gt = gt[int(Step_Index / 10)]
-            gt = gt.astype('float32')
-
-            return gt, bvp
-
-
-        elif self.dataName == 'VIPL':
-            bvp_name = 'Label_CSI/BVP_Filt.mat'
-            bvp_path = os.path.join(nowPath, bvp_name)
-            bvp = scio.loadmat(bvp_path)['BVP']
-            bvp = np.array(bvp.astype('float32')).reshape(-1)
-            bvp = bvp[Step_Index:Step_Index + self.frames_num]
-            bvp = (bvp - np.min(bvp)) / (np.max(bvp) - np.min(bvp))
-            bvp = bvp.astype('float32')
-
-            gt_name = 'Label_CSI/HR.mat'
-            gt_path = os.path.join(nowPath, gt_name)
-            gt = scio.loadmat(gt_path)['HR']
-            gt = np.array(gt.astype('float32')).reshape(-1)
-            gt = np.nanmean(gt[Step_Index:Step_Index + self.frames_num])
-            gt = gt.astype('float32')
-
-            sp_name = 'Label_CSI/SPO2_Filt.mat'
-            sp_path = os.path.join(nowPath, sp_name)
-            sp = scio.loadmat(sp_path)['SPO2']
-            sp = np.array(sp.astype('float32')).reshape(-1)
-            sp = np.nanmean(sp[Step_Index:Step_Index + self.frames_num])
-            sp = sp.astype('float32')
-
-            return gt, bvp, sp
-
-        elif self.dataName == 'V4V':
-            gt_name = 'Label/HR.mat'
-            gt_path = os.path.join(nowPath, gt_name)
-            gt = scio.loadmat(gt_path)['HR']
-            gt = np.array(gt.astype('float32')).reshape(-1)
-            gt = np.nanmean(gt[Step_Index:Step_Index + self.frames_num])
-            gt = gt.astype('float32')
-            bvp = np.array(0.0)
-            bvp = bvp.astype('float32')
-
-            rf_name = 'Label/RF.mat'
-            rf_path = os.path.join(nowPath, rf_name)
-            rf = scio.loadmat(rf_path)['RF']
-            rf = np.array(rf.astype('float32')).reshape(-1)
-            rf = np.nanmean(rf[Step_Index:Step_Index + self.frames_num])
-            rf = rf.astype('float32')
-
-            return gt, bvp, rf
-
-        elif self.dataName == 'HCW':
-            bvp_name = 'Label/BVP_Filt.mat'
-            bvp_path = os.path.join(nowPath, bvp_name)
-            bvp = scio.loadmat(bvp_path)['BVP']
-            bvp = np.array(bvp.astype('float32')).reshape(-1)
-            bvp = bvp[Step_Index:Step_Index + self.frames_num]
-            bvp = (bvp - np.min(bvp)) / (np.max(bvp) - np.min(bvp))
-            bvp = bvp.astype('float32')
-
-            gt_name = 'Label/HR_Filt.mat'
-            gt_path = os.path.join(nowPath, gt_name)
-            gt = scio.loadmat(gt_path)['HR']
-            gt = np.array(gt.astype('float32')).reshape(-1)
-            gt = np.nanmean(gt[Step_Index:Step_Index + self.frames_num])
-            gt = gt.astype('float32')
-
-            # gt, _, _ = utils.hr_fft(bvp, fs=30, harmonics_removal=True)
-            # gt = np.array(gt)
-            # gt = gt.astype('float32')
-
-            # rf = rr_cal(bvp)
-
-            rf_name = 'Label/RF_Filt.mat'
-            rf_path = os.path.join(nowPath, rf_name)
-            rf = scio.loadmat(rf_path)['RF']
-            rf = np.array(rf.astype('float32')).reshape(-1)
-            rf = np.nanmean(
-                rf[Step_Index:Step_Index + self.frames_num])  # np.nanmean(rf[Step_Index:Step_Index + self.frames_num])
-            rf = rf.astype('float32')
-
-            return gt, bvp, rf
 
         elif self.dataName == 'PURE':
             bvp_name = 'Label/BVP.mat'
@@ -379,13 +171,8 @@ class Data_DG(Dataset):
         Step_Index = int(temp['Step_Index'])
         people_i = nowPath.split('/')[-1]
         # get HR value and bvp signal
-        if self.dataName == 'On_Road_rPPG':
+        if self.dataName == 'PhysDrive':
             gt, bvp, sp, rr, resp = self.getLabel(nowPath, Step_Index)
-            # if np.isnan(bvp).sum().item() > 0:
-            #
-            #     print("NaN :", index_nowPath)
-            #     os.remove(index_nowPath)
-
         elif self.dataName in ['PURE', 'VIPL', 'VV100', 'HMPC-Dv1']:
             gt, bvp, sp = self.getLabel(nowPath, Step_Index)
         elif self.dataName in ['HCW', 'V4V']:
@@ -440,7 +227,7 @@ class Data_DG(Dataset):
         if ((Spatial_aug_flag == 0) and (Temporal_aug_flag == 0)):
             map_aug = map_ori
 
-        if self.dataName == 'On_Road_rPPG':
+        if self.dataName == 'PhysDrive':
             gt_aug, bvp_aug, sp_aug, rr_aug, resp_aug = self.getLabel(nowPath, Step_Index_aug)
         elif self.dataName in ['PURE', 'VIPL', 'VV100', 'HMPC-Dv1']:
             gt_aug, bvp_aug, sp_aug = self.getLabel(nowPath, Step_Index_aug)
@@ -467,13 +254,7 @@ class Data_DG(Dataset):
 
         map_ori = self.transform(map_ori)
         map_aug = self.transform_aug(map_aug)
-        '''
-        if self.dataName in ['PURE', 'VIPL', 'VV100']:
-            return (map_ori, bvp, gt, sp, gt, map_aug, bvp_aug, gt_aug, sp_aug, gt_aug, self.domain_label)
-        elif self.dataName in ['HCW', 'V4V']:
-            return (map_ori, bvp, gt, 0, rf, map_aug, bvp_aug, gt_aug, 0, rf_aug, self.domain_label)
-        else:
-            return (map_ori, bvp, gt, 0, gt, map_aug, bvp_aug, gt_aug, 0, gt_aug, self.domain_label)'''
+
         if self.output_people:
             domain_label = self.peoplelist.index(people_i)
         else:
@@ -483,10 +264,7 @@ class Data_DG(Dataset):
             return (map_ori, bvp, gt, sp, gt, map_aug, bvp_aug, gt, sp, gt, domain_label)
         elif self.dataName in ['HCW', 'V4V']:
             return (map_ori, bvp, gt, 0, rf, map_aug, bvp_aug, gt, 0, rf, domain_label)
-        elif self.dataName in ['HMPC-Dv1']:
-            return (
-                map_ori, bvp, gt, sp, utils.rr_cal(bvp), map_aug, bvp_aug, gt, sp, utils.rr_cal(bvp_aug), domain_label)
-        elif self.dataName in ['On_Road_rPPG']:
+        elif self.dataName in ['PhysDrive']:
             return (map_ori, bvp, gt, sp, resp, rr, map_aug, bvp_aug, gt, sp, resp_aug, rr, domain_label)
         else:
             return (map_ori, bvp, gt, 0, bvp, 0, map_aug, bvp_aug, gt, 0, bvp, 0, domain_label)
@@ -605,26 +383,6 @@ def getIndex(root_path, filesList, save_path, Pic_path, Step, frames_num):
 
 
 
-def getIndex2(root_path, filesList, save_path, Pic_path, Step, frames_num):
-    Index_path = []
-    print('Now processing' + root_path)
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
-    for sub_file in filesList:
-        now = os.path.join(root_path, sub_file)
-        img_path = os.path.join(now, os.path.join('STMap', Pic_path))
-        temp = cv2.imread(img_path)
-        Num = temp.shape[1]
-        Res = Num - frames_num - 1  # 可能是Diff数据
-        Step_num = int(Res / Step)
-        for i in range(Step_num):
-            Step_Index = i * Step
-            temp_path = sub_file + '_' + str(1000 + i) + '_.mat'
-            scio.savemat(os.path.join(save_path, temp_path), {'Path': now, 'Step_Index': Step_Index})
-            Index_path.append(temp_path)
-    return Index_path
-
-
 def calculate_respiration_rate(breathing_signal, sampling_rate=30):
     """
     Calculate the respiration rate from a breathing signal.
@@ -641,8 +399,3 @@ def calculate_respiration_rate(breathing_signal, sampling_rate=30):
     respiration_rate = num_of_breaths / duration_in_minutes
     return respiration_rate
 
-# Example usage
-# Replace 'your_breathing_signal_array' with your actual breathing signal data
-# breathing_signal = np.array(your_breathing_signal_array)
-# respiration_rate = calculate_respiration_rate(breathing_signal)
-# print(f"Respiration Rate: {respiration_rate} breaths/minute")
