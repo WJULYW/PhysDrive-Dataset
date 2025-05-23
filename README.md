@@ -30,7 +30,7 @@ The PhysDrive, comprises about 24 hours(**1500K frames**) of recordings from RGB
 ## 🗝️ Access and Usage
 **This dataset is built for academic use. Any commercial usage is banned.**  
 There are two kinds of datasets for your convenience: 
-Preprocessed (one-subject raw RGB and NIR data and all-subject preprocessed mmWave data ([link](https://www.kaggle.com/datasets/xiaoyang274/physdrive), no need for data share agreement); Raw (all raw dataset(requires signing data share agreement, please contact jwanggo@connect.ust.hk).    
+Preprocessed (one-subject raw RGB and NIR data and all-subject preprocessed mmWave data ([link](https://www.kaggle.com/datasets/xiaoyang274/physdrive), no need for data share agreement); Raw (all-subject raw data, requires signing data share agreement, please contact jwanggo@connect.ust.hk).    
 <!--
 \\There are two ways for downloads： OneDrive and Baidu Netdisk for researchers from different regions.  For those researchers in China, a hard disk could also be a solution.
 \\To access the dataset, you are supposed to download this [data release agreement](https://github.com/McJackTang/MMPD_rPPG_dataset/blob/main/MMPD_Release_Agreement.pdf).  
