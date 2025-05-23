@@ -38,11 +38,11 @@ Preprocessed (one-subject raw RGB and NIR data and all-subject preprocessed mmWa
 -->
 
 
-## ⚙️ Experiment Procedure[Updated]  
-<img src='https://github.com/WJULYW/PhysDrive-Dataset/blob/main/figs/experiment_design.png' width = 50% height = 50% />
+## ⚙️ Experiment Procedure  
+<img src='https://github.com/WJULYW/PhysDrive-Dataset/blob/main/figs/experiment_design.png' width = 80% height = 80% />
 
 ## 📊 Distribution
-<img src='https://github.com/WJULYW/PhysDrive-Dataset/blob/main/figs/experiment_design.png' width = 50% height = 50% />
+<img src='https://github.com/WJULYW/PhysDrive-Dataset/blob/main/figs/distribution.png' width = 80% height = 80% />
 
 
 ## 🖥️ The Dataset Structure
