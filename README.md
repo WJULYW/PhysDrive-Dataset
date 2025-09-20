@@ -65,11 +65,11 @@ PhysDrive dataset (Preprocessed)
 Title: [PhysDrive: A Multimodal Remote Physiological Measurement Dataset for In-vehicle Driver Monitoring](https://arxiv.org/abs/2507.19172) 
 
 Jiyao Wang, Xiao Yang, Qingyong Hu, Jiankai Tang, Can Liu, Dengbo He, Yuntao Wang, Yingcong Chen, Kaishun Wu, NIPS, 2025  
-
-@@article{wang2025physdrive,
+```
+@article{wang2025physdrive,
   title={PhysDrive: A Multimodal Remote Physiological Measurement Dataset for In-vehicle Driver Monitoring},
   author={Wang, Jiyao and Yang, Xiao and Hu, Qingyong and Tang, Jiankai and Liu, Can and He, Dengbo and Wang, Yuntao and Chen, Yingcong and Wu, Kaishun},
   journal={arXiv preprint arXiv:2507.19172},
   year={2025}
 }
-
+```
