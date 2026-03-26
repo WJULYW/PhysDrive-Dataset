@@ -66,10 +66,10 @@ Title: [PhysDrive: A Multimodal Remote Physiological Measurement Dataset for In-
 
 Jiyao Wang, Xiao Yang, Qingyong Hu, Jiankai Tang, Can Liu, Dengbo He, Yuntao Wang, Yingcong Chen, Kaishun Wu, NIPS, 2025  
 ```
-@article{wang2025physdrive,
-  title={PhysDrive: A Multimodal Remote Physiological Measurement Dataset for In-vehicle Driver Monitoring},
-  author={Wang, Jiyao and Yang, Xiao and Hu, Qingyong and Tang, Jiankai and Liu, Can and He, Dengbo and Wang, Yuntao and Chen, Yingcong and Wu, Kaishun},
-  journal={arXiv preprint arXiv:2507.19172},
-  year={2025}
+@article{wang2024efficient,
+  title={Efficient mixture-of-expert for video-based driver state and physiological multi-task estimation in conditional autonomous driving},
+  author={Wang, Jiyao and Yang, Xiao and Wang, Zhenyu and Wei, Ximeng and Wang, Ange and He, Dengbo and Wu, Kaishun},
+  journal={arXiv preprint arXiv:2410.21086},
+  year={2024}
 }
 ```
